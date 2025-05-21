@@ -8,7 +8,8 @@ const kafka = new Kafka({
   brokers: ["localhost:9092"],
 });
 
-const ChatAI = "http://localhost:9000/chat";
+//const ChatAI = "http://localhost:9000/chat";
+const OllamaAI = "http://localhost:11434/api/generate"
 const PYTHON_API = "http://localhost:1011";
 
 const getPythonEndpoint = (modelNumber) => {
@@ -54,10 +55,14 @@ const producer = kafka.producer();
       try {
         if (payload.modelNumber < 100 && payload.modelNumber > 0) {
           // Chat AI processing
-          const res = await axios.post(ChatAI, {
-            text: payload.text,
-            modelNumber: payload.modelNumber,
-            history: false,
+          const res = await axios.post(OllamaAI, {
+            //text: payload.text,
+            //modelNumber: payload.modelNumber,
+            //history: false,
+
+            "prompt": payload.text,
+            "model":"llama3.2:3b",
+            "stream": false,
           });
           aiResult = res.data;
         } else {
