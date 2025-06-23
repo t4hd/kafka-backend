@@ -78,6 +78,10 @@ consumer = Consumer(conf_Con)
 producer = Producer(conf_Pro)
 consumer.subscribe(['chat-messages'])
 
+#ChatAI = "http://localhost:9000/chat";
+ChatAI = "http://localhost:11434/api/generate" #Ollama
+PYTHON_API = "http://localhost:1011"
+
 
 
 __all__ = [
@@ -88,5 +92,7 @@ __all__ = [
     "consumer",
     "producer",
     "decode_message",
-    "send_kafka_result"
+    "send_kafka_result",
+    "ChatAI",
+    "PYTHON_API"
 ]

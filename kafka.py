@@ -4,10 +4,6 @@ import base64
 import io
 from kafka_function import *
 
-#ChatAI = "http://localhost:9000/chat";
-OllamaAI = "http://localhost:11434/api/generate"
-PYTHON_API = "http://localhost:1011"
-
 try:
     while True:
         msg = consumer.poll(0.1)
@@ -84,7 +80,7 @@ try:
                     "prompt": prompt,
                     "stream": False
                 }
-                response = requests.post(OllamaAI, json=ollama_payload)
+                response = requests.post(ChatAI, json=ollama_payload)
 
                 if response.ok:
                     result = response.json()
