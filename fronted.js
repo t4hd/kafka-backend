@@ -1,41 +1,48 @@
-const { Kafka, CompressionTypes } = require("kafkajs");
+const { Kafka } = require('kafkajs');
+const fs = require('fs');
 
+// Kafka config
 const kafka = new Kafka({
-  clientId: "test_producer",
-  brokers: ["localhost:9092"], // replace with your broker address
+  clientId: 'js-file-producer',
+  brokers: ['localhost:9092'], // change if needed
 });
 
 const producer = kafka.producer();
 
-const run = async () => {
-  await producer.connect();
+async function sendFileMessage(topic, key, filePath, modelNumber) {
+  try {
+    await producer.connect();
 
-  const userId = "user123";
-  const chatId = "chat456";
-  const key = `${userId}:${chatId}`;
+    // Read file and convert to base64
+    const fileBuffer = fs.readFileSync(filePath);
+    const base64File = fileBuffer.toString('base64');
 
-  const payload = {
-    messageId: "msg001",
-    text: "diocane",
-    status: "sent",
-    attempt: 1,
-    timestamp: new Date().toISOString(),
-    // errorMsg is optional
-  };
+    const message = {
+      status: 'incoming',
+      pipeline: true,
+      modelNumber: modelNumber,
+      audio: base64File,  // This key must match your backend's expected field for the file
+      timestamp: Math.floor(Date.now() / 1000),
+      text: '', // optional
+    };
 
-  await producer.send({
-    topic: "chat-messages",
-    compression: CompressionTypes.GZIP,
-    messages: [
-      {
-        key,
-        value: JSON.stringify(payload),
-      },
-    ],
-  });
+    await producer.send({
+      topic: topic,
+      messages: [
+        {
+          key: key,
+          value: JSON.stringify(message),
+        },
+      ],
+    });
 
-  console.log(`✅ Sent message with key "${key}"`);
-  await producer.disconnect();
-};
+    console.log(`Sent file ${filePath} as base64 to topic ${topic} with key ${key}`);
+  } catch (err) {
+    console.error('Error sending message:', err);
+  } finally {
+    await producer.disconnect();
+  }
+}
 
-run().catch(console.error);
+// Usage example:
+sendFileMessage('chat-messages', 'user123:chat456', './audio.ogg', 101);

@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Except these files
+!kafka.py
+!fronted.js
+
+# Never ignore .gitignore itself
+!.gitignore
