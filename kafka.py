@@ -42,6 +42,7 @@ model_configs = {
 ollama_model_configs = {
     1: {"model": "llama3.2:3b"},
     2: {"model": "deepseek-r1:1.5b"},
+    3: {"model": "wizardlm2:7b"},
     # add more as needed
 }
 
