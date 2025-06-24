@@ -2,8 +2,7 @@
 *
 
 # Except these files
-!kafka.py
-!kafka_function.py
+!*.py
 !fronted.js
 
 # Never ignore .gitignore itself
