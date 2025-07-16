@@ -34,12 +34,19 @@ try:
 
             try:
                 if input_type == "file":
-                    base64_file_content = value.get(form_field)
-                    if not base64_file_content:
-                        raise ValueError(f"Missing base64 encoded '{form_field}' field")
+                    file_url = value.get(form_field)
+                    if not file_url:
+                        raise ValueError(f"Missing file URL in '{form_field}' field")
                     
-                    file_bytes = base64.b64decode(base64_file_content)
-                    files = {form_field: (f"{form_field}.bin", io.BytesIO(file_bytes))}
+                    # Ottieni l'estensione dal link (es: .mp3, .wav)
+                    file_extension = file_url.split('.')[-1].split('?')[0]
+                    file_name = f"{form_field}.{file_extension}"
+
+                    file_response = requests.get(file_url)
+                    if not file_response.ok:
+                        raise Exception(f"Failed to download file from {file_url}: {file_response.status_code}")
+                    
+                    files = {form_field: (file_name, io.BytesIO(file_response.content))}
                     response = requests.post(url, files=files)
 
                 elif input_type == "text":
